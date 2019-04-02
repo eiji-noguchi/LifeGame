@@ -196,7 +196,7 @@ view.create = function (nx, ny, width, height) {
     // セルの幅
     view.cellWidth = view.layer[0].width / nx;
     // セルの高さ
-    view.cellHeight = view.layer[0].height.ny;
+    view.cellHeight = view.layer[0].height / ny;
     // 生物を表す円の半径
     view.markRadius = (Math.min(view.cellWidth, view.cellHeight / 2.5 + 0.5)) | 0
     // canvasコンテキストを取得
@@ -232,6 +232,10 @@ view.create = function (nx, ny, width, height) {
         document.dispatchEvent(view.clickEvent);
     }, false);
     // changeCellイベントリスナの登録:stateからのイベントでセルを再描画する
+    document.addEventListener("changecell", function (e) {
+        view.drawCell(e.detail.ix, e.detail.iy, e.detail.life);
+    }, false);
+    // changeGenerationイベントリスナの登録:stateからのイベントで世代数を更新する
     document.addEventListener("changegeneration", function (e) {
         view.showGeneration(e.detail.generation);
     }, false);
@@ -402,31 +406,31 @@ controls.pattern = function (state) {
                 if (array[i][d] > max[d]) {
                     max[d] = array[i][d];
                 }
-                if(array[i][d]<min[d]){
-                    min[d]=array[i][d];
+                if (array[i][d] < min[d]) {
+                    min[d] = array[i][d];
                 }
             }
         }
         // 全セルを削除
         state.clearAllCell();
         // Canvasの中心にパターンを配置
-        for(var i=0; i<array.length; i++){
-            var ix = array[i][0]+Math.floor((state.nx-min[0]-max[0])/2);
-            var iy = array[i][1]+Math.floor((state.ny-min[1]-max[1])/2);
-            state.setLife(ix,iy,1);
+        for (var i = 0; i < array.length; i++) {
+            var ix = array[i][0] + Math.floor((state.nx - min[0] - max[0]) / 2);
+            var iy = array[i][1] + Math.floor((state.ny - min[1] - max[1]) / 2);
+            state.setLife(ix, iy, 1);
         }
-        state.tellGenerationChange(state.generation=0);
+        state.tellGenerationChange(state.generation = 0);
     }
 };
 
 /**
  * 消去ボタン
  */
-controls.clear = function(state){
-    var input = elt("input",{type:"button",value:"全消去"});
-    input.addEventListener("clicl",function(e){
+controls.clear = function (state) {
+    var input = elt("input", { type: "button", value: "全消去" });
+    input.addEventListener("click", function (e) {
         clearInterval(state.timer);
-        state.playing=false;
+        state.playing = false;
     });
     return input;
 }
