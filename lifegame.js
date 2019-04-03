@@ -1,8 +1,8 @@
 "use strict";
 // state,view,controlsの3つのからのオブジェクトの生成
-var state = Object.create(null); //M:ライフゲームの状態を表すオブジェクト
-var view = Object.create(null); //V:状態をグラフィックスで表示するオブジェクト
-var controls = Object.create(null); //C:コントローラーオブジェクト
+var state = {}; //M:ライフゲームの状態を表すオブジェクト
+var view = {}; //V:状態をグラフィックスで表示するオブジェクト
+var controls = {}; //C:コントローラーオブジェクト
 
 /**
  * JSONファイルを読み込み、ライフゲームを生成 
@@ -198,9 +198,10 @@ state.clearAllCell = function () {
 view.create = function (nx, ny, width, height) {
     // レイヤーを表すcanvas要素を生成
     view.layer = [];
-    // 生物表示用
-    view.layer[0] = elt("canvas", { id: "rayer0", width: width, height: height });  // 生物を描画
-    view.layer[1] = elt("canvas", { id: "rayer1", width: width, height: height });  // 格子線を描画
+    // 生物表示用レイヤーの生成
+    view.layer[0] = elt("canvas", { id: "rayer0", width: width, height: height });
+    // 格子線用のレイヤー
+    view.layer[1] = elt("canvas", { id: "rayer1", width: width, height: height });
     // 格子サイズ、セルのサイズ、生物マーカーの半径を設定
     view.nx = nx;
     view.ny = ny;
@@ -209,11 +210,9 @@ view.create = function (nx, ny, width, height) {
     // セルの高さ
     view.cellHeight = view.layer[0].height / ny;
     // 生物を表す円の半径
-    view.markRadius = (Math.min(view.cellWidth, view.cellHeight / 2.5 + 0.5)) | 0
+    //view.markRadius = (Math.min(view.cellWidth, view.cellHeight / 2.5 + 0.5)) | 0
+    view.markRadius = view.cellWidth/2;
     // canvasコンテキストを取得
-    if (view.ctx) {
-        delete view.ctx
-    }
     view.ctx = [];
     for (var i = 0; i < view.layer.length; i++) {
         view.ctx.push(view.layer[i].getContext("2d"));
@@ -352,7 +351,7 @@ controls.changeTimeInterval = function (state) {
     }
     select.selectedIndex = 2;
     select.addEventListener("change", function (e) {
-        SVGMetadataElement.timeInterval = options[select.selectedIndex].value;
+        state.timeInterval = options[select.selectedIndex].value;
         if (state.playing) {
             clearInterval(state.timer);
             state.timer = setInterval(state.update, state.timeInterval);
