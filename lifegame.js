@@ -135,7 +135,7 @@ state.getSumAround = function (ix, iy) {
 state.update = function () {
     // 状態を変えずに全セルをスキャンし、変更するセルをchangedCell配列に求める
     var changedCell = [];
-    for (var ix = 0; iy < state.nx; ix++) {
+    for (var ix = 0; ix < state.nx; ix++) {
         for (var iy = 0; iy < state.ny; iy++) {
             var sum = state.getSumAround(ix, iy);
             if (sum <= 1 || sum > 4) {
@@ -178,6 +178,17 @@ state.setLife = function (ix, iy, life) {
         }
     }
     // 世代を0としコールバックする
+    state.tellGenerationChange(state.generation = 0);
+}
+/**
+ * 全てのセルをクリアする
+ */
+state.clearAllCell = function () {
+    for (var ix = 0; ix < state.nx; ix++) {
+        for (var iy = 0; iy < state.ny; iy++) {
+            state.setLife(ix, iy, 0);
+        }
+    }
     state.tellGenerationChange(state.generation = 0);
 }
 
@@ -427,10 +438,11 @@ controls.pattern = function (state) {
  * 消去ボタン
  */
 controls.clear = function (state) {
-    var input = elt("input", { type: "button", value: "全消去" });
+    var input = elt("input", { type: "button", value: "全消去!" });
     input.addEventListener("click", function (e) {
         clearInterval(state.timer);
         state.playing = false;
+        state.clearAllCell();
     });
     return input;
 }
