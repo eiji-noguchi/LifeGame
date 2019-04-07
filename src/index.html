@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Life Game</title>
+  <style>
+    .title {
+      margin: 10px;
+      width: 770px;
+      text-align: center;
+    }
+
+    .viewpanel {
+      position: relative;
+    }
+
+    .viewpanel canvas {
+      position: absolute;
+      background-color: transparent;
+    }
+
+    .status {
+      position: absolute;
+      top: 602px;
+      text-align: left;
+      font-size: 0.7em;
+    }
+  </style>
+  <script src="https://www.gstatic.com/firebasejs/5.9.3/firebase.js"></script>
+  <script>
+    // Initialize Firebase
+    var config = {
+      apiKey: "AIzaSyC94m0a-R1Dkm_X-RbfUEfZjhd6yNr5w34",
+      authDomain: "lifegame-fb2f8.firebaseapp.com",
+      databaseURL: "https://lifegame-fb2f8.firebaseio.com",
+      projectId: "lifegame-fb2f8",
+      storageBucket: "lifegame-fb2f8.appspot.com",
+      messagingSenderId: "768843320029"
+    };
+    firebase.initializeApp(config);
+  </script>
+  <script src="./elt.js"></script>
+  <script src="./lifegame.js"></script>
+</head>
+
+<body>
+</body>
+
+</html>
