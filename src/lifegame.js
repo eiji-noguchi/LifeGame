@@ -122,6 +122,7 @@ state.getSumAround = function (ix, iy) {
     var dx = [0, 1, 1, 1, 0, -1, -1, -1];
     var dy = [1, 1, 0, -1, -1, -1, 0, 1];
     for (var k = 0, sum = 0; k < dx.length; k++) {
+        // 周期的境界条件
         if (state.cells[(ix + dx[k] + state.nx) % state.nx][(iy + dy[k] + state.ny) % state.ny]) {
             sum++;
         }
@@ -138,14 +139,14 @@ state.update = function () {
     for (var ix = 0; ix < state.nx; ix++) {
         for (var iy = 0; iy < state.ny; iy++) {
             var sum = state.getSumAround(ix, iy);
-            if (sum <= 1 || sum > 4) {
+            if (sum <= 1 || sum >= 4) {
                 // 死滅
                 if (state.cells[ix][iy]) {
                     changedCell.push({ x: ix, y: iy });
                     // セルの変更をコールバック
                     state.tellCellChange(ix, iy, 0);
                 }
-            } else if (sum = 3) {
+            } else if (sum === 3) {
                 // 誕生
                 if (!state.cells[ix][iy]) {
                     changedCell.push({ x: ix, y: iy });
@@ -211,7 +212,7 @@ view.create = function (nx, ny, width, height) {
     view.cellHeight = view.layer[0].height / ny;
     // 生物を表す円の半径
     //view.markRadius = (Math.min(view.cellWidth, view.cellHeight / 2.5 + 0.5)) | 0
-    view.markRadius = view.cellWidth/2;
+    view.markRadius = view.cellWidth / 2;
     // canvasコンテキストを取得
     view.ctx = [];
     for (var i = 0; i < view.layer.length; i++) {
@@ -442,6 +443,28 @@ controls.clear = function (state) {
         clearInterval(state.timer);
         state.playing = false;
         state.clearAllCell();
+        console.log("消去")
+        var database = firebase.database().ref("patterns");
+        database.on("value",function(snapshot){
+            console.log(snapshot.val())
+        })
     });
+    return input;
+}
+
+/**
+ * JSONファイルの読み込み
+ */
+controls.import = function () {
+    var input = elt("input", { type: "file", value: "ファイル読込", name: "jsonfile" });
+    var reader = new FileReader();
+    input.addEventListener("change", function (e) {
+        console.log("aaaaa")
+        console.log(e.target.files);
+        reader.readAsText(e.target.files[0]);
+    })
+    reader.onload = function (e) {
+        console.log(JSON.parse(e.target.result));
+    }
     return input;
 }
